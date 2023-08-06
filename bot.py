@@ -1,7 +1,6 @@
 import discord
 import os
 import subprocess
-from commands import unlock as unlock
 
 if(os.path.exists("key.txt")):
     with open("key.txt","r") as f:
@@ -40,8 +39,6 @@ async def on_message(message):
         command = 'rundll32.exe user32.dll,LockWorkStation'
         # Execute the command
         subprocess.run(command, shell=True)
-    if msg == "unlock":
-        pass
-        unlock.exec()
+        await message.delete()
 
 client.run(TOKEN)
