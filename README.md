@@ -50,15 +50,15 @@ pip install -r requirements.txt
 1. Go to the Discord Developer Portal: [Discord Developer Portal](https://discord.com/developers/applications)
 2. Click on "New Application" and give your bot a name.
 
-   ![New Application](images\1.png)
+   ![NewApplication](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/1.png?raw=true)
 
 3. Under the "Token" section, click "Reset Token" then copy your bot's token.
 
-   ![Copy Token](images\2.png)
+   ![Copy Token](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/2.png?raw=true)
 
 4. Under the "Privileged Gateway Intents," select "MESSAGE CONTENT INTENT"
 
-   ![Copy Token](images\5.png)
+   ![Copy Token](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/5.png?raw=true)
     
 
 ## Step 6: Configure the keys and IDs
@@ -85,8 +85,8 @@ Example
    - Under "OAuth2 URL Generator," select the "bot" scope and the required permissions.
    - Copy the generated URL and open it in a browser. Follow the prompts to add the bot to a server.
 
-   ![Add Bot to Server](images\3.png)
-   ![Add Select Perms](images\4.png)
+   ![Add Bot to Server](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/3.png?raw=true)
+   ![Add Select Perms](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/4.png?raw=true)
 
 ## Step 8: Run the Bot
 
