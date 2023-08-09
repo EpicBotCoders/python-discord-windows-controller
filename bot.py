@@ -1,7 +1,6 @@
 import discord
 import os
 import subprocess
-
 if(os.path.exists("key.txt")):
     with open("key.txt","r") as f:
         TOKEN = f.read()
@@ -39,6 +38,8 @@ async def on_message(message):
         command = 'rundll32.exe user32.dll,LockWorkStation'
         # Execute the command
         subprocess.run(command, shell=True)
+        channel = client.get_channel(1137697616101122128)
+        await channel.send("Locked workstation sucessfully")
         await message.delete()
 
 client.run(TOKEN)
