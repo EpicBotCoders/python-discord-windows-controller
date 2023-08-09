@@ -1,12 +1,20 @@
 import discord
 import os
 import subprocess
+import json
+
 if(os.path.exists("key.txt")):
     with open("key.txt","r") as f:
         TOKEN = f.read()
 else:
     TOKEN = ""
 
+    
+with open("config.json", "r") as config_file:
+    config = json.load(config_file)
+    CMD_CHANNEL_ID = config["command_channel_id"]
+    AUTHOR_ID = config["author_id"]
+    LOG_CHANNEL_ID = config["log_channel_id"]
 
 intents = discord.Intents.default()
 intents.message_content = True  # Enable the message content intent
@@ -22,12 +30,12 @@ async def on_message(message):
     msg = str(message.content).lower()
     if message.author == client.user:
         return
-    elif message.channel.id != 1137776176451039374:
+    elif message.channel.id != CMD_CHANNEL_ID:
         print("Wrong channel")
         return
     elif message.author.bot:
         return
-    elif message.author.id != 637911567920529409:
+    elif message.author.id != AUTHOR_ID:
         print("Wrong author")
         return
 
@@ -38,7 +46,7 @@ async def on_message(message):
         command = 'rundll32.exe user32.dll,LockWorkStation'
         # Execute the command
         subprocess.run(command, shell=True)
-        channel = client.get_channel(1137697616101122128)
+        channel = client.get_channel(LOG_CHANNEL_ID)
         await channel.send("Locked workstation sucessfully")
         await message.delete()
 
