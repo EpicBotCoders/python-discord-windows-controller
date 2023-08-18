@@ -2,6 +2,7 @@ import discord
 import os
 import subprocess
 import json
+import asyncio
 
 if(os.path.exists("key.txt")):
     with open("key.txt","r") as f:
@@ -49,5 +50,11 @@ async def on_message(message):
         channel = client.get_channel(LOG_CHANNEL_ID)
         await channel.send("Locked workstation sucessfully")
         await message.delete()
+    
+    if msg == "ping":
+        response = await message.channel.send("Pong !")
+        await client.get_channel(LOG_CHANNEL_ID).send("Pinged!")
+
+        await asyncio.sleep(2)
 
 client.run(TOKEN)
