@@ -1,6 +1,7 @@
-key.txt
 .env
 .gitattributes
+.gitignore
 
-
+# config file
+key.txt
 config.json
