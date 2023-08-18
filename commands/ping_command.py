@@ -1,5 +1,4 @@
-async def execute_ping_command(client, message):
-    config = client.load_config()
+async def execute_ping_command(client, message, config):
     LOG_CHANNEL_ID = config["log_channel_id"]
 
     response = await message.channel.send("Pong !")

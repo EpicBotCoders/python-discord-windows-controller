@@ -1,8 +1,6 @@
 import discord
 import os
-import subprocess
 import json
-import asyncio
 
 if os.path.exists("key.txt"):
     with open("key.txt", "r") as f:
@@ -37,10 +35,10 @@ async def on_message(message):
 
     if msg == "lock":
         from commands.lock_command import execute_lock_command
-        await execute_lock_command(client, message)
+        await execute_lock_command(client, message, config)
 
     if msg == "ping":
         from commands.ping_command import execute_ping_command
-        await execute_ping_command(client, message)
+        await execute_ping_command(client, message, config)
 
 client.run(TOKEN)
