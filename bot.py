@@ -32,6 +32,11 @@ async def on_message(message):
 
     if message.author.bot or message.author.id != config["author_id"]:
         return
+    
+    if str(message.attachments) != "[]":
+        print(message.attachments)
+        from commands.file_save import execute_file_save
+        await execute_file_save(client,message,config)
 
     if msg == "lock":
         from commands.lock_command import execute_lock_command
