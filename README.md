@@ -1,6 +1,6 @@
-# Creating and Running a Discord Bot - Step-by-Step Guide
+# Discord Windows Controller Bot
 
-This guide will walk you through the process of setting up and running a Discord bot that performs specific tasks using the repository "python-discord-windows-controller." Follow these steps to get your bot up and running!
+The Discord Windows Controller Bot is a Python bot designed to control Windows operations through Discord commands. It can perform tasks like locking your workstation and monitoring mouse movement in a specified channel. Follow these steps to set up and run the bot.
 
 ## Step 1: Clone the Repository
 
@@ -18,7 +18,7 @@ Navigate to the cloned repository's folder using the `cd` command:
 cd python-discord-windows-controller
 ```
 
-## Step 3: Create and Activate a Virtual Environment (__Optional but Recommended__)
+## Step 3: Create and Activate a Virtual Environment (Optional but Recommended)
 
 Set up a virtual environment to manage your project's dependencies. This step is optional but recommended:
 
@@ -50,7 +50,7 @@ pip install -r requirements.txt
 1. Go to the Discord Developer Portal: [Discord Developer Portal](https://discord.com/developers/applications)
 2. Click on "New Application" and give your bot a name.
 
-   ![NewApplication](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/1.png?raw=true)
+   ![New Application](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/1.png?raw=true)
 
 3. Under the "Token" section, click "Reset Token" then copy your bot's token.
 
@@ -58,24 +58,24 @@ pip install -r requirements.txt
 
 4. Under the "Privileged Gateway Intents," select "MESSAGE CONTENT INTENT"
 
-   ![Copy Token](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/5.png?raw=true)
+   ![Select Intent](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/5.png?raw=true)
     
-
-## Step 6: Configure the keys and IDs
+## Step 6: Configure the Keys and IDs
 
 1. In the project folder, create a text file named "key.txt."
 2. Paste the copied bot token into the "key.txt" file and save it.
-3. Get your Channel ID and your own ID from discord, and paste them into the "config.json" file.
+3. Get your Channel ID and your own ID from Discord, and paste them into the "config.json" file.
 
-Example
+Example:
+
 ```json
 {
     "command_channel_id": 1137276176451079374,
     "author_id": 637917562920429309,
-    "log_channel_id": 1137693326543122128
+    "log_channel_id": 1137693326543122128,
+    "mouse_log_channel_id": 1137693326543123128
 }
 ```
-
 
 ## Step 7: Test the Bot
 
@@ -86,16 +86,18 @@ Example
    - Copy the generated URL and open it in a browser. Follow the prompts to add the bot to a server.
 
    ![Add Bot to Server](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/3.png?raw=true)
-   ![Add Select Perms](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/4.png?raw=true)
+   ![Select Permissions](https://github.com/EpicBotCoders/python-discord-windows-controller/blob/main/images/4.png?raw=true)
 
 ## Step 8: Run the Bot
 
 1. In the terminal, navigate to the project folder and activate the virtual environment if you created one.
 2. Run the bot using the following command:
+
    ```bash
    python bot.py
    ```
+
 ## Step 9: Test the Functionality
 
 1. In the server where your bot is added, send a message with the content "lock" in the designated channel.
-3. The bot should respond by locking the workstation and sending a confirmation message.
+2. The bot should respond by locking the workstation and sending a confirmation message.
