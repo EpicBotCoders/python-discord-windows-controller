@@ -1,8 +1,10 @@
 .env
 .gitattributes
 .gitignore
+.venv
 
 # config file
 key.txt
 config.json
 files/*
+data/data.json

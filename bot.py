@@ -3,6 +3,8 @@ import os
 import json
 import socket
 import asyncio
+import pyautogui
+from commands.mouse_movement import monitor_mouse_movement
 
 def is_connected():
     try:
@@ -33,17 +35,19 @@ async def main():
 
     intents = discord.Intents.default()
     intents.message_content = True
+    config = load_config()
 
     client = discord.Client(intents=intents)
 
     @client.event
     async def on_ready():
         print(f"We have logged in as {client.user}")
+        starting_mouse_position = pyautogui.position()
+        asyncio.create_task(monitor_mouse_movement(client, config,starting_mouse_position))  # Call the function
 
     @client.event
     async def on_message(message):
         msg = str(message.content).lower()
-        config = load_config()
 
         if message.author == client.user or message.channel.id != config["command_channel_id"]:
             return
