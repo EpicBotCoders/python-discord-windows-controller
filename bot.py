@@ -6,6 +6,7 @@ import asyncio
 import pyautogui
 from commands.mouse_movement import monitor_mouse_movement
 
+
 def is_connected():
     try:
         # Try to resolve a common domain to check if network is available
@@ -15,10 +16,12 @@ def is_connected():
         pass
     return False
 
+
 def load_config():
     with open("config.json", "r") as config_file:
         config = json.load(config_file)
         return config
+
 
 async def main():
     while True:
@@ -43,13 +46,18 @@ async def main():
     async def on_ready():
         print(f"We have logged in as {client.user}")
         starting_mouse_position = pyautogui.position()
-        asyncio.create_task(monitor_mouse_movement(client, config,starting_mouse_position))  # Call the function
+        asyncio.create_task(
+            monitor_mouse_movement(client, config, starting_mouse_position)
+        )  # Call the function
 
     @client.event
     async def on_message(message):
         msg = str(message.content).lower()
 
-        if message.author == client.user or message.channel.id != config["command_channel_id"]:
+        if (
+            message.author == client.user
+            or message.channel.id != config["command_channel_id"]
+        ):
             return
 
         if message.author.bot or message.author.id != config["author_id"]:
@@ -58,16 +66,20 @@ async def main():
         if str(message.attachments) != "[]":
             print(message.attachments)
             from commands.file_save import execute_file_save
-            await execute_file_save(client,message,config)
+
+            await execute_file_save(client, message, config)
 
         if msg == "lock":
             from commands.lock_command import execute_lock_command
+
             await execute_lock_command(client, message, config)
 
         if msg == "ping":
             from commands.ping_command import execute_ping_command
+
             await execute_ping_command(client, message, config)
 
     await client.start(TOKEN)
+
 
 asyncio.run(main())

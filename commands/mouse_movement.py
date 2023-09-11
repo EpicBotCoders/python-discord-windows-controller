@@ -7,6 +7,7 @@ import json
 import datetime
 from PIL import ImageGrab
 
+
 async def monitor_mouse_movement(client, config, starting_mouse_position):
     log_channel_id = config["mouse_log_channel_id"]
     log_channel = client.get_channel(log_channel_id)
@@ -28,10 +29,14 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
                 try:
                     image_message = await log_channel.fetch_message(image_message_id)
                 except discord.NotFound:
-                    image_message = None  # Set image_message to None if the message is not found
+                    image_message = (
+                        None  # Set image_message to None if the message is not found
+                    )
             last_movement_time = data.get("last_movement_time")
             if last_movement_time:
-                last_movement_time = datetime.datetime.strptime(last_movement_time, "%d-%m-%Y %H:%M:%S")
+                last_movement_time = datetime.datetime.strptime(
+                    last_movement_time, "%d-%m-%Y %H:%M:%S"
+                )
     except (FileNotFoundError, json.JSONDecodeError, discord.NotFound, ValueError):
         pass
 
@@ -39,10 +44,21 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
         current_mouse_position = pyautogui.position()
 
         if current_mouse_position != previous_mouse_position:
-            message = f"Mouse moved to `{current_mouse_position[0]}`, `{current_mouse_position[1]}`"
+            message = f"Current Screengrab"
             last_movement_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
-            screenshot = ImageGrab.grab(bbox=(0, 0, 800, 600))
+            screenshot = ImageGrab.grab(
+                bbox=(
+                    current_mouse_position[0]
+                    - 400,  # Adjust the X coordinate to capture around the mouse
+                    current_mouse_position[1]
+                    - 300,  # Adjust the Y coordinate to capture around the mouse
+                    current_mouse_position[0]
+                    + 400,  # Adjust the X coordinate to capture around the mouse
+                    current_mouse_position[1]
+                    + 300,  # Adjust the Y coordinate to capture around the mouse
+                )
+            )
 
             screenshot.save("data/screenshot.png")
 
@@ -53,7 +69,9 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
                 except discord.NotFound:
                     pass  # Message already deleted or not found
 
-            image_message = await log_channel.send(message, file=discord.File("data/screenshot.png"))
+            image_message = await log_channel.send(
+                message, file=discord.File("data/screenshot.png")
+            )
 
             if last_message:
                 await last_message.edit(content=message)
@@ -61,7 +79,14 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
                 last_message = await log_channel.send(message)
 
             with open("data/data.json", "w") as data_file:
-                json.dump({"last_message_id": last_message.id, "image_message_id": image_message.id, "last_movement_time": last_movement_time}, data_file)
+                json.dump(
+                    {
+                        "last_message_id": last_message.id,
+                        "image_message_id": image_message.id,
+                        "last_movement_time": last_movement_time,
+                    },
+                    data_file,
+                )
         else:
             message = f"No mouse movement detected. Last movement at `{last_movement_time}`\nCurrent Position: `{current_mouse_position[0]}`, `{current_mouse_position[1]}`"
             if last_message:

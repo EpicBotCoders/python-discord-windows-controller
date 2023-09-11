@@ -1,5 +1,6 @@
 import time
 
+
 async def execute_ping_command(client, message, config):
     LOG_CHANNEL_ID = config["log_channel_id"]
 
