@@ -44,7 +44,8 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
         current_mouse_position = pyautogui.position()
 
         if current_mouse_position != previous_mouse_position:
-            message = f"Current Screengrab"
+            print(f"[mouse_movement_LOG] - {last_movement_time} : Mouse Movement Detected.")
+            message = f"Mouse moved to `{current_mouse_position[0]}`, `{current_mouse_position[1]}`"
             last_movement_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
             screenshot = ImageGrab.grab(
@@ -72,6 +73,8 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
             image_message = await log_channel.send(
                 message, file=discord.File("data/screenshot.png")
             )
+
+            print(f"[mouse_movement_LOG] - {last_movement_time} : Mouse SS sent.")
 
             if last_message:
                 await last_message.edit(content=message)
