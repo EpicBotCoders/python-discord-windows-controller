@@ -65,7 +65,6 @@ async def main():
             return
 
         if str(message.attachments) != "[]":
-            print(message.attachments)
             from commands.file_save import execute_file_save
 
             await execute_file_save(client, message, config)
