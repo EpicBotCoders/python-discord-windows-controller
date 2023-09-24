@@ -6,7 +6,7 @@ async def execute_file_save(client, message, config):
     await message.guild.get_channel(LOG_CHANNEL_ID).send(f"File Detected: {filename}")
     try:
         await message.attachments[0].save(
-            fp="files/{}".format(filename)
+            fp="D:/Coding\Discord bots/python-windows-bot/files/{}".format(filename)
         )  # saves the file
         await message.guild.get_channel(LOG_CHANNEL_ID).send("File Sucessfully saved")
         print(f"[file_save_LOG] - File Sucessfully saved.")

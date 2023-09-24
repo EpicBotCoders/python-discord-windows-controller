@@ -6,6 +6,9 @@ import asyncio
 import pyautogui
 from commands.mouse_movement import monitor_mouse_movement
 
+KEY_PATH = "D:\Coding\Discord bots\python-windows-bot\key.txt"
+CONFIG_PATH = "D:\Coding\Discord bots\python-windows-bot\config.json"
+
 
 def is_connected():
     try:
@@ -19,7 +22,7 @@ def is_connected():
 
 def load_config():
     print("Loading configuration file...")
-    with open("config.json", "r") as config_file:
+    with open(CONFIG_PATH, "r") as config_file:
         config = json.load(config_file)
         return config
 
@@ -31,8 +34,8 @@ async def main():
         print("Waiting for network...")
         await asyncio.sleep(5)  # Wait for 5 seconds before checking again
 
-    if os.path.exists("key.txt"):
-        with open("key.txt", "r") as f:
+    if os.path.exists(KEY_PATH):
+        with open(KEY_PATH, "r") as f:
             TOKEN = f.read()
     else:
         TOKEN = ""

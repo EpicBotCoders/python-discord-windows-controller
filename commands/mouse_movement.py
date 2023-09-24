@@ -7,6 +7,9 @@ import json
 import datetime
 from PIL import ImageGrab
 
+DATA_JSON_PATH = "D:\Coding\Discord bots\python-windows-bot\data\data.json"
+SCREENSHOT_PATH = "D:\Coding\Discord bots\python-windows-bot\data\screenshot.png"
+
 
 async def monitor_mouse_movement(client, config, starting_mouse_position):
     log_channel_id = config["mouse_log_channel_id"]
@@ -19,7 +22,7 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
     previous_mouse_position = starting_mouse_position
 
     try:
-        with open("data/data.json", "r") as data_file:
+        with open(DATA_JSON_PATH, "r") as data_file:
             data = json.load(data_file)
             last_message_id = data.get("last_message_id")
             image_message_id = data.get("image_message_id")
@@ -61,7 +64,7 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
                 )
             )
 
-            screenshot.save("data/screenshot.png")
+            screenshot.save(SCREENSHOT_PATH)
 
             # Check if image_message is not None and attempt to delete it if it exists
             if image_message:
@@ -71,7 +74,7 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
                     pass  # Message already deleted or not found
 
             image_message = await log_channel.send(
-                message, file=discord.File("data/screenshot.png")
+                message, file=discord.File(SCREENSHOT_PATH)
             )
 
             print(f"[mouse_movement_LOG] - {last_movement_time} : Mouse SS sent.")
@@ -81,7 +84,7 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
             else:
                 last_message = await log_channel.send(message)
 
-            with open("data/data.json", "w") as data_file:
+            with open(DATA_JSON_PATH, "w") as data_file:
                 json.dump(
                     {
                         "last_message_id": last_message.id,
