@@ -9,4 +9,5 @@ config.json
 files/*
 data/data.json
 data/screenshot.png
+data/mouse-ss.png
 test.py

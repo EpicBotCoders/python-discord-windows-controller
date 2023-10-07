@@ -8,7 +8,7 @@ import datetime
 from PIL import ImageGrab
 
 DATA_JSON_PATH = "D:\Coding\Discord bots\python-windows-bot\data\data.json"
-SCREENSHOT_PATH = "D:\Coding\Discord bots\python-windows-bot\data\screenshot.png"
+SCREENSHOT_PATH = "D:\Coding\Discord bots\python-windows-bot\data\mouse-ss.png"
 
 
 async def monitor_mouse_movement(client, config, starting_mouse_position):
