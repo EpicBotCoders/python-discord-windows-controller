@@ -51,20 +51,23 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
             message = f"Mouse moved to `{current_mouse_position[0]}`, `{current_mouse_position[1]}`"
             last_movement_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
-            screenshot = ImageGrab.grab(
-                bbox=(
-                    current_mouse_position[0]
-                    - 400,  # Adjust the X coordinate to capture around the mouse
-                    current_mouse_position[1]
-                    - 300,  # Adjust the Y coordinate to capture around the mouse
-                    current_mouse_position[0]
-                    + 400,  # Adjust the X coordinate to capture around the mouse
-                    current_mouse_position[1]
-                    + 300,  # Adjust the Y coordinate to capture around the mouse
+            try:
+                screenshot = ImageGrab.grab(
+                    bbox=(
+                        current_mouse_position[0] - 400,
+                        current_mouse_position[1] - 300,
+                        current_mouse_position[0] + 400,
+                        current_mouse_position[1] + 300,
+                    )
                 )
-            )
 
-            screenshot.save(SCREENSHOT_PATH)
+                screenshot.save(SCREENSHOT_PATH)
+            except OSError as e:
+                print(f"[mouse_movement_LOG] - Error capturing screenshot: {e}")
+                await asyncio.sleep(5)
+                continue  # Skip the rest of the loop iteration if there's an error
+
+
 
             # Check if image_message is not None and attempt to delete it if it exists
             if image_message:
