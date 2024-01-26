@@ -6,6 +6,7 @@ import pyautogui
 import json
 import datetime
 from PIL import ImageGrab
+import time
 
 DATA_JSON_PATH = "D:\Coding\Discord bots\python-windows-bot\data\data.json"
 SCREENSHOT_PATH = "D:\Coding\Discord bots\python-windows-bot\data\mouse-ss.png"
@@ -47,18 +48,19 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
         current_mouse_position = pyautogui.position()
 
         if current_mouse_position != previous_mouse_position:
+            current_time = int(time.time())
             print(f"[mouse_movement_LOG] - {last_movement_time} : Mouse Movement Detected.")
-            message = f"Mouse moved to `{current_mouse_position[0]}`, `{current_mouse_position[1]}`"
+            message = f"Mouse moved to `{current_mouse_position[0]}`, `{current_mouse_position[1]}` at "+f'<t:{current_time}>'
             last_movement_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
             try:
                 screenshot = ImageGrab.grab(
-                    bbox=(
-                        current_mouse_position[0] - 400,
-                        current_mouse_position[1] - 300,
-                        current_mouse_position[0] + 400,
-                        current_mouse_position[1] + 300,
-                    )
+                    # bbox=(
+                    #     current_mouse_position[0] - 400,
+                    #     current_mouse_position[1] - 300,
+                    #     current_mouse_position[0] + 400,
+                    #     current_mouse_position[1] + 300,
+                    # )
                 )
 
                 screenshot.save(SCREENSHOT_PATH)
@@ -69,12 +71,12 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
 
 
 
-            # Check if image_message is not None and attempt to delete it if it exists
-            if image_message:
-                try:
-                    await image_message.delete()
-                except discord.NotFound:
-                    pass  # Message already deleted or not found
+            # # Check if image_message is not None and attempt to delete it if it exists
+            # if image_message:
+            #     try:
+            #         await image_message.delete()
+            #     except discord.NotFound:
+            #         pass  # Message already deleted or not found
 
             image_message = await log_channel.send(
                 message, file=discord.File(SCREENSHOT_PATH)
