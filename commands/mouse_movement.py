@@ -45,8 +45,6 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
     except (FileNotFoundError, json.JSONDecodeError, discord.NotFound, ValueError):
         pass
 
-    webcam = cv2.VideoCapture(0)  # Initialize webcam capture
-
     while True:
         current_mouse_position = pyautogui.position()
 
@@ -65,9 +63,11 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
                 continue  # Skip the rest of the loop iteration if there's an error
 
             # Capture webcam image
+            webcam = cv2.VideoCapture(0)  # Initialize webcam capture
             ret, frame = webcam.read()
             if ret:
                 cv2.imwrite(WEBCAM_CAPTURE_PATH, frame)
+            webcam.release()  # Release the webcam capture
 
             # Load the screenshot and webcam capture images
             screenshot = cv2.imread(SCREENSHOT_PATH)
