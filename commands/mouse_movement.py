@@ -7,10 +7,13 @@ import json
 import datetime
 from PIL import ImageGrab
 import time
+import cv2
+import os
 
 DATA_JSON_PATH = "D:\Coding\Discord bots\python-windows-bot\data\data.json"
 SCREENSHOT_PATH = "D:\Coding\Discord bots\python-windows-bot\data\mouse-ss.png"
-
+WEBCAM_CAPTURE_PATH = "D:\Coding\Discord bots\python-windows-bot\data\webcam-capture.jpg"
+COMBINED_IMAGE_PATH = "D:\Coding\Discord bots\python-windows-bot\data\combined_image.png"
 
 async def monitor_mouse_movement(client, config, starting_mouse_position):
     log_channel_id = config["mouse_log_channel_id"]
@@ -33,9 +36,7 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
                 try:
                     image_message = await log_channel.fetch_message(image_message_id)
                 except discord.NotFound:
-                    image_message = (
-                        None  # Set image_message to None if the message is not found
-                    )
+                    image_message = None  # Set image_message to None if the message is not found
             last_movement_time = data.get("last_movement_time")
             if last_movement_time:
                 last_movement_time = datetime.datetime.strptime(
@@ -43,6 +44,8 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
                 )
     except (FileNotFoundError, json.JSONDecodeError, discord.NotFound, ValueError):
         pass
+
+    webcam = cv2.VideoCapture(0)  # Initialize webcam capture
 
     while True:
         current_mouse_position = pyautogui.position()
@@ -54,32 +57,42 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
             last_movement_time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
             try:
-                screenshot = ImageGrab.grab(
-                    # bbox=(
-                    #     current_mouse_position[0] - 400,
-                    #     current_mouse_position[1] - 300,
-                    #     current_mouse_position[0] + 400,
-                    #     current_mouse_position[1] + 300,
-                    # )
-                )
-
+                screenshot = ImageGrab.grab()
                 screenshot.save(SCREENSHOT_PATH)
             except OSError as e:
                 print(f"[mouse_movement_LOG] - Error capturing screenshot: {e}")
                 await asyncio.sleep(5)
                 continue  # Skip the rest of the loop iteration if there's an error
 
+            # Capture webcam image
+            ret, frame = webcam.read()
+            if ret:
+                cv2.imwrite(WEBCAM_CAPTURE_PATH, frame)
 
+            # Load the screenshot and webcam capture images
+            screenshot = cv2.imread(SCREENSHOT_PATH)
+            webcam_capture = cv2.imread(WEBCAM_CAPTURE_PATH)
 
-            # # Check if image_message is not None and attempt to delete it if it exists
-            # if image_message:
-            #     try:
-            #         await image_message.delete()
-            #     except discord.NotFound:
-            #         pass  # Message already deleted or not found
+            # Calculate the scaling ratio to fit the webcam image within a maximum width and height
+            max_width = 200  # Maximum width for the webcam capture image
+            max_height = 150  # Maximum height for the webcam capture image
+            scale_ratio = min(max_width / webcam_capture.shape[1], max_height / webcam_capture.shape[0])
+
+            # Resize the webcam capture image while maintaining aspect ratio
+            webcam_capture_resized = cv2.resize(webcam_capture, (0, 0), fx=scale_ratio, fy=scale_ratio)
+
+            # Define the coordinates where the webcam capture will be placed in the screenshot
+            x_offset = 10  # Adjust as needed
+            y_offset = 10  # Adjust as needed
+
+            # Overlay the webcam capture on the screenshot
+            screenshot[y_offset:y_offset+webcam_capture_resized.shape[0], x_offset:x_offset+webcam_capture_resized.shape[1]] = webcam_capture_resized
+
+            # Save the resulting image
+            cv2.imwrite(COMBINED_IMAGE_PATH, screenshot)
 
             image_message = await log_channel.send(
-                message, file=discord.File(SCREENSHOT_PATH)
+                message, file=discord.File(COMBINED_IMAGE_PATH)
             )
 
             print(f"[mouse_movement_LOG] - {last_movement_time} : Mouse SS sent.")

@@ -10,5 +10,7 @@ files/*
 data/data.json
 data/screenshot.png
 data/mouse-ss.png
+data/combined_image.png
+data/webcam-capture.jpg
 test.py
 commands-to-be-added/*
