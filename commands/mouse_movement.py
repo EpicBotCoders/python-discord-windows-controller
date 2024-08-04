@@ -1,5 +1,3 @@
-# commands/mouse_movement.py
-
 import discord
 import asyncio
 import pyautogui
@@ -10,10 +8,10 @@ import time
 import cv2
 import os
 
-DATA_JSON_PATH = "D:\Coding\Discord bots\python-windows-bot\data\data.json"
-SCREENSHOT_PATH = "D:\Coding\Discord bots\python-windows-bot\data\mouse-ss.png"
-WEBCAM_CAPTURE_PATH = "D:\Coding\Discord bots\python-windows-bot\data\webcam-capture.jpg"
-COMBINED_IMAGE_PATH = "D:\Coding\Discord bots\python-windows-bot\data\combined_image.png"
+DATA_JSON_PATH = "data/data.json"
+SCREENSHOT_PATH = "data/mouse-ss.png"
+WEBCAM_CAPTURE_PATH = "data/webcam-capture.jpg"
+COMBINED_IMAGE_PATH = "data/combined_image.png"
 
 async def monitor_mouse_movement(client, config, starting_mouse_position):
     log_channel_id = config["mouse_log_channel_id"]
@@ -21,7 +19,7 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
     last_message = None
     image_message_id = None
     last_movement_time = None
-    image_message = None  # Define image_message here to ensure it's initialized
+    image_message = None
 
     previous_mouse_position = starting_mouse_position
 
@@ -36,7 +34,7 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
                 try:
                     image_message = await log_channel.fetch_message(image_message_id)
                 except discord.NotFound:
-                    image_message = None  # Set image_message to None if the message is not found
+                    image_message = None
             last_movement_time = data.get("last_movement_time")
             if last_movement_time:
                 last_movement_time = datetime.datetime.strptime(
@@ -60,42 +58,47 @@ async def monitor_mouse_movement(client, config, starting_mouse_position):
             except OSError as e:
                 print(f"[mouse_movement_LOG] - Error capturing screenshot: {e}")
                 await asyncio.sleep(5)
-                continue  # Skip the rest of the loop iteration if there's an error
+                continue
 
             # Capture webcam image
-            webcam = cv2.VideoCapture(0)  # Initialize webcam capture
+            webcam = cv2.VideoCapture(0)
             ret, frame = webcam.read()
+            webcam.release()
+
             if ret:
                 cv2.imwrite(WEBCAM_CAPTURE_PATH, frame)
-            webcam.release()  # Release the webcam capture
+                webcam_capture = cv2.imread(WEBCAM_CAPTURE_PATH)
+                
+                if webcam_capture is not None:
+                    screenshot = cv2.imread(SCREENSHOT_PATH)
+                    
+                    if screenshot is not None:
+                        max_width = 200
+                        max_height = 150
+                        scale_ratio = min(max_width / webcam_capture.shape[1], max_height / webcam_capture.shape[0])
 
-            # Load the screenshot and webcam capture images
-            screenshot = cv2.imread(SCREENSHOT_PATH)
-            webcam_capture = cv2.imread(WEBCAM_CAPTURE_PATH)
+                        webcam_capture_resized = cv2.resize(webcam_capture, (0, 0), fx=scale_ratio, fy=scale_ratio)
 
-            # Calculate the scaling ratio to fit the webcam image within a maximum width and height
-            max_width = 200  # Maximum width for the webcam capture image
-            max_height = 150  # Maximum height for the webcam capture image
-            scale_ratio = min(max_width / webcam_capture.shape[1], max_height / webcam_capture.shape[0])
+                        x_offset = 10
+                        y_offset = 10
 
-            # Resize the webcam capture image while maintaining aspect ratio
-            webcam_capture_resized = cv2.resize(webcam_capture, (0, 0), fx=scale_ratio, fy=scale_ratio)
+                        screenshot[y_offset:y_offset+webcam_capture_resized.shape[0], x_offset:x_offset+webcam_capture_resized.shape[1]] = webcam_capture_resized
 
-            # Define the coordinates where the webcam capture will be placed in the screenshot
-            x_offset = 10  # Adjust as needed
-            y_offset = 10  # Adjust as needed
+                        cv2.imwrite(COMBINED_IMAGE_PATH, screenshot)
 
-            # Overlay the webcam capture on the screenshot
-            screenshot[y_offset:y_offset+webcam_capture_resized.shape[0], x_offset:x_offset+webcam_capture_resized.shape[1]] = webcam_capture_resized
-
-            # Save the resulting image
-            cv2.imwrite(COMBINED_IMAGE_PATH, screenshot)
-
-            image_message = await log_channel.send(
-                message, file=discord.File(COMBINED_IMAGE_PATH)
-            )
-
-            print(f"[mouse_movement_LOG] - {last_movement_time} : Mouse SS sent.")
+                        image_message = await log_channel.send(
+                            message, file=discord.File(COMBINED_IMAGE_PATH)
+                        )
+                        print(f"[mouse_movement_LOG] - {last_movement_time} : Mouse SS sent.")
+                    else:
+                        print("[mouse_movement_LOG] - Error reading screenshot.")
+                        image_message = await log_channel.send(message)
+                else:
+                    print("[mouse_movement_LOG] - Error reading webcam capture.")
+                    image_message = await log_channel.send(message)
+            else:
+                print("[mouse_movement_LOG] - Error capturing webcam image.")
+                image_message = await log_channel.send(message)
 
             if last_message:
                 await last_message.edit(content=message)

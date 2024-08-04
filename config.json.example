@@ -2,5 +2,6 @@
     "command_channel_id": 1137276176451079374,
     "author_id": 637917562920429309,
     "log_channel_id": 1137693326543122128,
-    "mouse_log_channel_id": 1137693326543123128
+    "mouse_log_channel_id": 1137693326543123128,
+    "file_save_path": "insert-file-path"
 }

@@ -2,6 +2,11 @@ import time
 
 
 async def execute_ping_command(client, message, config):
+    """
+    Responds with 'Pong!' to check if the bot is responsive.
+    
+    Usage: !ping
+    """
     LOG_CHANNEL_ID = config["log_channel_id"]
 
     ping_message = await message.channel.send("Pong !")

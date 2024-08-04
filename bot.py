@@ -6,12 +6,11 @@ import asyncio
 import pyautogui
 from commands.mouse_movement import monitor_mouse_movement
 
-KEY_PATH = "D:\Coding\Discord bots\python-windows-bot\key.txt"
-CONFIG_PATH = "D:\Coding\Discord bots\python-windows-bot\config.json"
+KEY_PATH = "key.txt"
+CONFIG_PATH = "config.json"
 
 def is_connected():
     try:
-        # Try to resolve a common domain to check if the network is available
         socket.create_connection(("www.google.com", 80))
         return True
     except OSError:
@@ -29,9 +28,9 @@ async def network_monitor():
         if not is_connected():
             print("Network connection lost. Waiting for network...")
             while not is_connected():
-                await asyncio.sleep(5)  # Wait for 5 seconds before checking again
+                await asyncio.sleep(5)
             print("Network has been restored.")
-        await asyncio.sleep(60)  # Check network status every 60 seconds
+        await asyncio.sleep(60)
 
 async def main():
     if os.path.exists(KEY_PATH):
@@ -46,16 +45,13 @@ async def main():
 
     client = discord.Client(intents=intents)
 
-    # Start the network monitoring task in the background
-    asyncio.create_task(network_monitor())
-
     @client.event
     async def on_ready():
         print(f"We have logged in as {client.user}")
         starting_mouse_position = pyautogui.position()
         asyncio.create_task(
             monitor_mouse_movement(client, config, starting_mouse_position)
-        )  # Call the function
+        )
 
     @client.event
     async def on_message(message):
@@ -73,23 +69,48 @@ async def main():
         
         if str(message.attachments) != "[]":
             from commands.file_save import execute_file_save
-
             await execute_file_save(client, message, config)
 
         if msg == "lock":
             from commands.lock_command import execute_lock_command
-
             await execute_lock_command(client, message, config)
 
         if msg == "ping":
             from commands.ping_command import execute_ping_command
-
             await execute_ping_command(client, message, config)
         
         if msg == "ss" or msg == "screenshot":
             from commands.screenshot_command import execute_screenshot_command
             await execute_screenshot_command(message, args)
+        
+        if msg == "help" or msg == "?":
+            from commands.help_command import execute_help_command
+            await execute_help_command(client, message, config)
 
-    await client.start(TOKEN)
+    try:
+        # Start the network monitoring task
+        network_task = asyncio.create_task(network_monitor())
+        
+        # Start the client
+        await client.start(TOKEN)
+    except KeyboardInterrupt:
+        print("Interrupt received. Shutting down gracefully...")
+    finally:
+        # Cancel all running tasks
+        tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
+        for task in tasks:
+            task.cancel()
+        
+        # Wait for all tasks to complete
+        await asyncio.gather(*tasks, return_exceptions=True)
+        
+        # Close the client connection
+        await client.close()
+        
+        print("Bot has been shut down.")
 
-asyncio.run(main())
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Bot stopped.")

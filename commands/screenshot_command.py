@@ -2,7 +2,7 @@ import discord
 import datetime
 from PIL import ImageGrab
 
-SCREENSHOT_PATH = "D:\Coding\Discord bots\python-windows-bot\data\screenshot.png"
+SCREENSHOT_PATH = "data\screenshot.png"
 
 def get_ss():
     screenshot = ImageGrab.grab()
@@ -10,6 +10,11 @@ def get_ss():
     return SCREENSHOT_PATH
 
 async def execute_screenshot_command(message,args):
+    """
+    Takes a screenshot of the current screen and sends it.
+    
+    Usage: !ss or !screenshot
+    """
     time = datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     MESSAGE = f"Screenshot at {time}"
     PATH = get_ss()
