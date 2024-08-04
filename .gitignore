@@ -1,7 +1,7 @@
 .env
 .gitattributes
 .gitignore
-.venv
+.venv/*
 
 # config file
 key.txt
@@ -14,3 +14,6 @@ data/combined_image.png
 data/webcam-capture.jpg
 test.py
 commands-to-be-added/*
+
+commands/__pycache__/*
+/venv
