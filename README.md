@@ -1,6 +1,6 @@
 # Discord Windows Controller Bot
 
-The Discord Windows Controller Bot is a Python bot designed to control Windows operations through Discord commands. It can perform tasks like locking your workstation and monitoring mouse movement in a specified channel. Follow these steps to set up and run the bot.
+The Discord Windows Controller Bot is a Python bot designed to control Windows operations through Discord commands. It can perform tasks like locking your workstation and monitoring mouse movement in a specified channel as well as saving files you send to the local workstation. Follow these steps to set up and run the bot.
 
 ## Step 1: Clone the Repository
 
@@ -97,6 +97,7 @@ If you still face issues, try the following:
 1. In the project folder, create a text file named "key.txt."
 2. Paste the copied bot token into the "key.txt" file and save it.
 3. Get your Channel ID and your own ID from Discord, and paste them into the "config.json" file.
+4. Create a folder where you would want the files to be saved to locally, and copy the path to the `file_save_path` variable
 
 Example:
 
@@ -105,7 +106,8 @@ Example:
     "command_channel_id": 1137276176451079374,
     "author_id": 637917562920429309,
     "log_channel_id": 1137693326543122128,
-    "mouse_log_channel_id": 1137693326543123128
+    "mouse_log_channel_id": 1137693326543123128,
+    "file_save_path": "insert/file/path"
 }
 ```
 

@@ -5,6 +5,7 @@ import socket
 import asyncio
 import pyautogui
 from commands.mouse_movement import monitor_mouse_movement
+from aiohttp.client_exceptions import ClientConnectorError
 
 KEY_PATH = "key.txt"
 CONFIG_PATH = "config.json"
@@ -35,7 +36,7 @@ async def network_monitor():
 async def main():
     if os.path.exists(KEY_PATH):
         with open(KEY_PATH, "r") as f:
-            TOKEN = f.read()
+            TOKEN = f.read().strip()
     else:
         TOKEN = ""
 
@@ -87,14 +88,27 @@ async def main():
             from commands.help_command import execute_help_command
             await execute_help_command(client, message, config)
 
+    async def start_bot():
+        while True:
+            try:
+                # Start the network monitoring task
+                network_task = asyncio.create_task(network_monitor())
+                
+                # Start the client
+                await client.start(TOKEN)
+            except ClientConnectorError:
+                print("Failed to connect to Discord. Retrying in 30 seconds...")
+                await asyncio.sleep(30)
+            except KeyboardInterrupt:
+                print("Interrupt received. Shutting down gracefully...")
+                break
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                print("Restarting the bot in 30 seconds...")
+                await asyncio.sleep(30)
+
     try:
-        # Start the network monitoring task
-        network_task = asyncio.create_task(network_monitor())
-        
-        # Start the client
-        await client.start(TOKEN)
-    except KeyboardInterrupt:
-        print("Interrupt received. Shutting down gracefully...")
+        await start_bot()
     finally:
         # Cancel all running tasks
         tasks = [t for t in asyncio.all_tasks() if t is not asyncio.current_task()]
