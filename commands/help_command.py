@@ -1,6 +1,5 @@
 import os
 import discord
-from discord.ext import commands
 
 async def execute_help_command(client, message, config):
     """
@@ -8,26 +7,26 @@ async def execute_help_command(client, message, config):
     
     Usage: !help or !?
     """
-    LOG_CHANNEL_ID = config["log_channel_id"]
-
-    commands_dir = r"D:\Coding\python-discord-windows-controller\commands"
+    commands_dir = os.path.dirname(__file__)
     command_files = [f for f in os.listdir(commands_dir) if f.endswith('.py') and f != '__init__.py']
 
-    embed = discord.Embed(title="Bot Commands", description="Here are all available commands:", color=discord.Color.blue())
+    embed = discord.Embed(title="🤖 Bot Commands", description="Here are all available commands:", color=discord.Color.blue())
 
-    for file in command_files:
+    for file in sorted(command_files):
         command_name = file[:-3]  # Remove .py extension
-        module = __import__(f"commands.{command_name}", fromlist=[''])
-        
-        # Try to get the docstring of the execute function
+        display_name = command_name.replace("_command", "")
         try:
+            module = __import__(f"commands.{command_name}", fromlist=[''])
             func = getattr(module, f"execute_{command_name}_command")
             description = func.__doc__ or "No description available."
-        except AttributeError:
+        except Exception:
             description = "No description available."
 
-        embed.add_field(name=f"!{command_name}", value=description, inline=False)
+        embed.add_field(name=f"!{display_name}", value=description.strip(), inline=False)
 
     await message.channel.send(embed=embed)
     print(f"[help_command_LOG] - Help command executed.")
-    await message.delete()
+    try:
+        await message.delete()
+    except Exception:
+        pass

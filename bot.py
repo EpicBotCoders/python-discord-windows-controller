@@ -56,7 +56,8 @@ async def main():
 
     @client.event
     async def on_message(message):
-        msg = str(message.content).lower().split(' ')[0]
+        raw_msg = str(message.content).lower().split(' ')[0]
+        msg = raw_msg.lstrip("!")
         args = message.content.split(" ")[1:]
 
         if (
@@ -80,11 +81,19 @@ async def main():
             from commands.ping_command import execute_ping_command
             await execute_ping_command(client, message, config)
         
-        if msg == "ss" or msg == "screenshot":
+        if msg in ("ss", "screenshot"):
             from commands.screenshot_command import execute_screenshot_command
             await execute_screenshot_command(message, args)
+
+        if msg in ("photo", "webcam", "cam"):
+            from commands.photo_command import execute_photo_command
+            await execute_photo_command(client, message, args, config)
+
+        if msg in ("interval", "autocapture"):
+            from commands.interval_command import execute_interval_command
+            await execute_interval_command(client, message, args, config)
         
-        if msg == "help" or msg == "?":
+        if msg in ("help", "?"):
             from commands.help_command import execute_help_command
             await execute_help_command(client, message, config)
 
