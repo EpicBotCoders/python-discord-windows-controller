@@ -17,3 +17,4 @@ commands-to-be-added/*
 
 commands/__pycache__/*
 /venv
+*.pyc
